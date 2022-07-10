@@ -22,5 +22,10 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  env:
+    CONFIG_FILE: ${{ inputs.config_file }}
+    UPDATER_HOST: ${{ inputs.updater_host }}
+    API_KEY: ${{ inputs.api_key }}
+    SETUP_PATH: ${{ inputs.setup_path }}
   args:
     - ${{ inputs.mode }}
