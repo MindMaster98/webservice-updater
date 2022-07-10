@@ -1,0 +1,26 @@
+name: "Docker Service Updater"
+description: "Updates Docker services with the Microservice Updater (https://github.com/MindMaster98/microservice-updater)"
+inputs:
+  mode:
+    description: "Execution mode: register, update or delete"
+    required: true
+    default: "update"
+  config_file:
+    description: "Config file for update tasks"
+    required: true
+    default: "service_config/service_config.json"
+  updater_host:
+    description: "Host running the Microservice Updater"
+    required: true
+  api_key:
+    description: "API-KEY used by the Microservice Updater for authentication"
+    required: true
+  setup_path:
+    description: "Path to config files for Microservice Updater"
+    required: true
+    default: "service_config/files"
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.mode }}
