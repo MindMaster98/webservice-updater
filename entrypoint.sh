@@ -1,2 +1,2 @@
 #!/bin/bash
-python init_update.py $1
+python /init_update.py "$1"
