@@ -25,3 +25,48 @@ The GitHub Actions offers the following parameters for customization:
   }, ...
 }
 ```
+
+## Example
+This example provides a GitHub Action and the according configuration file to autodeploy an instance of the [Microservice Updater](https://github.com/MindMaster98/microservice-updater). The Action requires the project secrets `UPDATER_HOST` and `API_KEY` to work properly.
+
+### GitHub Action
+```yaml
+name: Docker Image CI
+
+on:
+  push:
+    # use default branch
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Required to access configuration
+    - uses: actions/checkout@v3
+    
+    # Initializing update process with default settings
+    - name: Init update
+      uses: MindMaster98/docker-service-updater@v0.1.4
+      with:
+        updater_host: ${{ secrets.UPDATER_HOST }}
+        api_key: ${{ secrets.API_KEY }}
+```
+
+### Configuration file at `service_config/service_config.json`
+```json
+{
+  "services": [
+    {
+      "mode": "dockerfile",
+      "port": "10001:9000",
+      "image": "bigoli98/microservice-updater",
+      "tag": "latest"
+    }
+  ],
+  "ids": {
+    "0": "bigoli98-microservice-updater"
+  }
+}
+```
