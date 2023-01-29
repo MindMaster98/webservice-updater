@@ -51,6 +51,7 @@ for i, service in enumerate(initialization_configuration['services']):
         # registration failed
         else:
             print(f'registration of service {i} failed:', response.text)
+            sys.exit(-3)
     # update service
     elif mode == 'update':
         if 'ids' in initialization_configuration:
@@ -64,6 +65,7 @@ for i, service in enumerate(initialization_configuration['services']):
             # update initiation failed
             else:
                 print(f'service {i} update failed.', response.text)
+                sys.exit(-4)
     # delete service
     elif mode == 'delete':
         if 'ids' in initialization_configuration:
@@ -79,3 +81,4 @@ for i, service in enumerate(initialization_configuration['services']):
                 initialization_configuration['ids'].pop(str(i))
             else:
                 print(f'service {i} deletion failed!', response.text)
+                sys.exit(-5)
