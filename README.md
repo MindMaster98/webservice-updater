@@ -48,7 +48,7 @@ jobs:
     
     # Initializing update process with default settings
     - name: Init update
-      uses: MindMaster98/docker-service-updater@v0.1.4
+      uses: MindMaster98/docker-service-updater@v0.1.5
       with:
         updater_host: ${{ secrets.UPDATER_HOST }}
         api_key: ${{ secrets.API_KEY }}
