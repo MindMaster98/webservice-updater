@@ -5,8 +5,6 @@ automated docker container updates and deployments.
 ## Parameters
 The GitHub Actions offers the following parameters for customization:
 
-* `mode` (default: `update`): The used mode of the Microservice Updater
-  * valid values: `register`, `update` or `delete`
 * `config_file` (default: `service_config/service_config.json`): relative path to the configuration file
 * `setup_path` (default: `service_config/files`): relative to the path containing files used to copy into Docker containers
 * `updater_host`: host of the Microservice Updater instance (e. g. `https://localhost:8443`)

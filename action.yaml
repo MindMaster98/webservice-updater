@@ -3,8 +3,9 @@ description: "Updates Docker services with the Microservice Updater (https://git
 inputs:
   mode:
     description: "Execution mode: register, update or delete"
-    required: true
+    required: false
     default: "update"
+    deprecationMessage: "The mode parameter is deprecated and ignored."
   config_file:
     description: "Config file for update tasks"
     required: true
@@ -27,5 +28,3 @@ runs:
     UPDATER_HOST: ${{ inputs.updater_host }}
     API_KEY: ${{ inputs.api_key }}
     SETUP_PATH: ${{ inputs.setup_path }}
-  args:
-    - ${{ inputs.mode }}

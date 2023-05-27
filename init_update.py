@@ -2,19 +2,7 @@ import requests
 import json
 from os import environ
 import sys
-
-mode_message = 'Please specify mode "register" or "update" or "delete"'
-
-# run configuration not provided
-if len(sys.argv) != 2:
-    print(mode_message)
-    sys.exit(-1)
-# invalid run configuration provided
-elif sys.argv[1] not in ['register', 'update', 'delete']:
-    print(mode_message)
-    sys.exit(-2)
-
-mode = sys.argv[1]
+import time
 
 # load service configuration
 with open(environ['CONFIG_FILE']) as f:
@@ -27,6 +15,7 @@ api_key = environ['API_KEY']
 # for each service configuration
 for i, service in enumerate(initialization_configuration['services']):
     service['API-KEY'] = api_key
+    service_id = initialization_configuration["ids"][str(i)]
 
     # read all related files and add them to the payload
     if 'files' in service:
@@ -34,51 +23,34 @@ for i, service in enumerate(initialization_configuration['services']):
             with open(f'{environ["SETUP_PATH"]}/{service["files"][file]}') as f:
                 service['files'][file] = f.read()
 
+    check = requests.get(f'{host}/service/{service_id}')
+
     # register new service
-    if mode == 'register':
+    if not check.ok:
         response = requests.post(f'{host}/service', json=service, headers={'Content-Type': 'application/json'},
                                  verify=False)
 
         # registration successful
         if response.ok:
             print(f'service {i} registered successfully.', response.text)
-
-            # store service_id for later updates or deletions
-            if 'ids' not in initialization_configuration:
-                initialization_configuration['ids'] = {}
-
-            initialization_configuration['ids'][str(i)] = response.json()['id']
         # registration failed
         else:
-            print(f'registration of service {i} failed:', response.text)
-            sys.exit(-3)
+            print(f'registration of service {service_id} failed:', response.text)
+            sys.exit(-1)
+
+        print(f'Waiting until initialization of {service_id} finished.')
+
+        while (state := requests.get(f'{host}/service/{service_id}').json()['state']) == 'INITIALIZING':
+            time.sleep(5)
+
     # update service
-    elif mode == 'update':
-        if 'ids' in initialization_configuration:
-            # send update request
-            response = requests.post(f'{host}/service/{initialization_configuration["ids"][str(i)]}',
-                                     json=service, headers={'Content-Type': 'application/json'}, verify=False)
+    response = requests.post(f'{host}/service/{service_id}', json=service,
+                             headers={'Content-Type': 'application/json'}, verify=False)
 
-            # update initiated successfully
-            if response.ok:
-                print(f'service {i} update initiated successfully.', response.text)
-            # update initiation failed
-            else:
-                print(f'service {i} update failed.', response.text)
-                sys.exit(-4)
-    # delete service
-    elif mode == 'delete':
-        if 'ids' in initialization_configuration:
-            # send delete request
-            response = requests.delete(f'{host}/service/{initialization_configuration["ids"][str(i)]}',
-                                       json=service, headers={'Content-Type': 'application/json'}, verify=False)
-
-            # deletion successful
-            if response.ok:
-                print(f'service {i} deleted.', response.text)
-
-                # delete id from configuration
-                initialization_configuration['ids'].pop(str(i))
-            else:
-                print(f'service {i} deletion failed!', response.text)
-                sys.exit(-5)
+    # update initiated successfully
+    if response.ok:
+        print(f'service {service_id} update initiated successfully.', response.text)
+    # update initiation failed
+    else:
+        print(f'service {service_id} update failed.', response.text)
+        sys.exit(-2)
