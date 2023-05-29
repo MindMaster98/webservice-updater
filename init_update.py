@@ -4,6 +4,14 @@ from os import environ
 import sys
 import time
 
+
+def generate_id(config: dict):
+    if config['mode'] == 'dockerfile':
+        return config['image'].replace('/', '-')
+    else:
+        return '-'.join(config['url'].lower().replace('//', '').split('/')[1:]).replace('.git', '')
+
+
 # load service configuration
 with open(environ['CONFIG_FILE']) as f:
     initialization_configuration = json.load(f)
@@ -15,7 +23,7 @@ api_key = environ['API_KEY']
 # for each service configuration
 for i, service in enumerate(initialization_configuration['services']):
     service['API-KEY'] = api_key
-    service_id = initialization_configuration["ids"][str(i)]
+    service_id = generate_id(service)
 
     # read all related files and add them to the payload
     if 'files' in service:
@@ -23,7 +31,7 @@ for i, service in enumerate(initialization_configuration['services']):
             with open(f'{environ["SETUP_PATH"]}/{service["files"][file]}') as f:
                 service['files'][file] = f.read()
 
-    check = requests.get(f'{host}/service/{service_id}')
+    check = requests.get(f'{host}/service/{service_id}', verify=False)
 
     # register new service
     if not check.ok:
@@ -40,7 +48,7 @@ for i, service in enumerate(initialization_configuration['services']):
 
         print(f'Waiting until initialization of {service_id} finished.')
 
-        while (state := requests.get(f'{host}/service/{service_id}').json()['state']) == 'INITIALIZING':
+        while (state := requests.get(f'{host}/service/{service_id}', verify=False).json()['state']) == 'INITIALIZING':
             time.sleep(5)
 
     # update service
