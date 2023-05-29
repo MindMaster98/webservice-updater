@@ -17,10 +17,7 @@ The GitHub Actions offers the following parameters for customization:
     {
       valid payload for the Microservice Updater
     }, ...
-  ],
-  "ids": {
-    "0": "ID provided by the Microservice Updater after registration"
-  }, ...
+  ]
 }
 ```
 
@@ -46,7 +43,7 @@ jobs:
     
     # Initializing update process with default settings
     - name: Init update
-      uses: MindMaster98/docker-service-updater@v0.1.5
+      uses: MindMaster98/docker-service-updater@v0.2.0
       with:
         updater_host: ${{ secrets.UPDATER_HOST }}
         api_key: ${{ secrets.API_KEY }}
@@ -62,9 +59,6 @@ jobs:
       "image": "bigoli98/microservice-updater",
       "tag": "latest"
     }
-  ],
-  "ids": {
-    "0": "bigoli98-microservice-updater"
-  }
+  ]
 }
 ```
