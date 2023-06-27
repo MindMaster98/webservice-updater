@@ -22,7 +22,7 @@ The GitHub Actions offers the following parameters for customization:
 ```
 
 ## Example
-This example provides a GitHub Action and the according configuration file to autodeploy an instance of the [Microservice Updater](https://github.com/MindMaster98/microservice-updater). The Action requires the project secrets `UPDATER_HOST` and `API_KEY` to work properly.
+This example provides a GitHub Action and the according configuration file to autodeploy an instance of the [Microservice Updater](https://github.com/WSE-research/microservice-updater). The Action requires the project secrets `UPDATER_HOST` and `API_KEY` to work properly.
 
 ### GitHub Action
 ```yaml
@@ -56,7 +56,7 @@ jobs:
     {
       "mode": "dockerfile",
       "port": "10001:9000",
-      "image": "bigoli98/microservice-updater",
+      "image": "wseresearch/microservice-updater",
       "tag": "latest"
     }
   ]
