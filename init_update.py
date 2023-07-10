@@ -2,7 +2,6 @@ import requests
 import json
 from os import environ
 import sys
-import time
 
 
 def generate_id(config: dict):
@@ -45,20 +44,15 @@ for i, service in enumerate(initialization_configuration['services']):
         else:
             print(f'registration of service {service_id} failed:', response.text)
             sys.exit(-1)
-
-        print(f'Waiting until initialization of {service_id} finished.')
-
-        while (state := requests.get(f'{host}/service/{service_id}', verify=False).json()['state']) == 'INITIALIZING':
-            time.sleep(5)
-
-    # update service
-    response = requests.post(f'{host}/service/{service_id}', json=service,
-                             headers={'Content-Type': 'application/json'}, verify=False)
-
-    # update initiated successfully
-    if response.ok:
-        print(f'service {service_id} update initiated successfully.', response.text)
-    # update initiation failed
     else:
-        print(f'service {service_id} update failed.', response.text)
-        sys.exit(-2)
+        # update service
+        response = requests.post(f'{host}/service/{service_id}', json=service,
+                                 headers={'Content-Type': 'application/json'}, verify=False)
+
+        # update initiated successfully
+        if response.ok:
+            print(f'service {service_id} update initiated successfully.', response.text)
+        # update initiation failed
+        else:
+            print(f'service {service_id} update failed.', response.text)
+            sys.exit(-2)
